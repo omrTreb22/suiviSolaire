@@ -58,8 +58,8 @@ int g_LedSequence = 0x01;
 #define DELTA_MINUTES             3
 
 #define DELTA(a, b)   (a > b ? (a-b) : (b-a))
-#define DELTA_THRESHOLD           2 
-#define NB_MIN_TRANSITION         2
+#define DELTA_THRESHOLD           3 
+#define NB_MIN_TRANSITION         3
 #define INCR(a)                   a = ((a < 100) ? (a+1) : a)
 #define DECR(a)                   a = ((a >= 1) ? (a-1) : a)
 
@@ -520,8 +520,6 @@ void loop()
           {
           g_Hours = 0;
           }
-        if (g_IsTimeSet && g_Hours == FIRST_HOUR && g_State != STATE_STORM)
-          g_State = STATE_INIT_AZIMUTH;
       }
     }
     if (g_Seconds == 0)  
@@ -529,7 +527,7 @@ void loop()
     }
 
    // LED management
-   int state = g_LedSequence & (1 << (g_Tenths+10*(g_seconds&1));
+   int state = g_LedSequence & (1 << (g_Tenths+10*(g_Seconds & 1)));
    if (state)
       digitalWrite(LED, 1);
    else
