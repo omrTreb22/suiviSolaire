@@ -94,7 +94,7 @@ int g_AutoElevation = 0;
 #define NUMBER_PER_HOUR 6
 
 #define FIRST_HOUR                6
-#define DEFAULT_ELEVATION         20   // Temporary : Default elevation - To be replaced by an evaluation based on day of year
+#define DEFAULT_ELEVATION          0   // Temporary : Default elevation - To be replaced by an evaluation based on day of year
 #define NIGHT_AZIMUTH             50   // Azimuth position for night hours
 #define NIGHT_ELEVATION           80   // Elevation position for night hours
 
@@ -102,8 +102,8 @@ unsigned char g_TableAzimuth[NUMBER_OF_HOURS*NUMBER_PER_HOUR];
 unsigned char  g_InitTableAzimuth[25] = { 0,0,0,0,0,0,0,0,0,0,0,10,25,50,50,75,90,100,100,100,100,100,100,100,100 }; 
 int g_Elevation = DEFAULT_ELEVATION; 
 
-int g_Hours = 15;
-int g_Minutes = 21;
+int g_Hours = 17;
+int g_Minutes = 57;
 int g_Seconds = 0;
 unsigned long nextTime;
 
