@@ -56,6 +56,7 @@ int g_LedSequence = 0x01;
 #define FULL_RANGE_DURATION_AZIMUTH       460L  // Duration (in 0,1s) for a full extension
 #define FULL_RANGE_DURATION_ELEVATION     390L
 #define DELTA_MINUTES             3
+#define LOW_THRESHOLD_NIGHT       16
 
 #define DELTA(a, b)   (a > b ? (a-b) : (b-a))
 #define DELTA_THRESHOLD           3 
@@ -94,7 +95,7 @@ int g_AutoElevation = 0;
 #define NUMBER_PER_HOUR 6
 
 #define FIRST_HOUR                6
-#define DEFAULT_ELEVATION          0   // Temporary : Default elevation - To be replaced by an evaluation based on day of year
+#define DEFAULT_ELEVATION         20   // Temporary : Default elevation - To be replaced by an evaluation based on day of year
 #define NIGHT_AZIMUTH             50   // Azimuth position for night hours
 #define NIGHT_ELEVATION           80   // Elevation position for night hours
 
@@ -102,8 +103,8 @@ unsigned char g_TableAzimuth[NUMBER_OF_HOURS*NUMBER_PER_HOUR];
 unsigned char  g_InitTableAzimuth[25] = { 0,0,0,0,0,0,0,0,0,0,0,10,25,50,50,75,90,100,100,100,100,100,100,100,100 }; 
 int g_Elevation = DEFAULT_ELEVATION; 
 
-int g_Hours = 17;
-int g_Minutes = 57;
+int g_Hours = 12;  // En hiver, mettre 1h de plus qu'affiché
+int g_Minutes = 21;
 int g_Seconds = 0;
 unsigned long nextTime;
 
@@ -144,7 +145,7 @@ void setup()
 
    nextTime = millis() + 100;
 
-   //loadData();
+   loadData();
    
    readAnalog();
    g_IsNight = checkNight();
@@ -153,7 +154,8 @@ void setup()
    if (digitalRead(STORM_MODE) == 0)
       {
       g_IsTimeSet = true;
-      g_LedSequence = LED_MODE_STORM;  
+      g_LedSequence = LED_MODE_STORM; 
+      g_Elevation = DEFAULT_ELEVATION; 
       }
    else
       g_LedSequence = g_IsNight ? LED_MODE_NIGHT_NOTIME : LED_MODE_DAY_NOTIME;  
@@ -356,15 +358,15 @@ void printStatus(void)
 
 int checkNight()
 {
-  if (!g_IsNight && g_Analog_Top_Left == 0 &&
-      g_Analog_Top_Right == 0 &&
-      g_Analog_Bottom_Left == 0 &&
-      g_Analog_Bottom_Right == 0)
+  if (!g_IsNight && g_Analog_Top_Left <= LOW_THRESHOLD_NIGHT &&
+      g_Analog_Top_Right <= LOW_THRESHOLD_NIGHT &&
+      g_Analog_Bottom_Left <= LOW_THRESHOLD_NIGHT &&
+      g_Analog_Bottom_Right <= LOW_THRESHOLD_NIGHT)
        return true;
-  if (g_IsNight && g_Analog_Top_Left != 0 &&
-      g_Analog_Top_Right != 0 &&
-      g_Analog_Bottom_Left != 0 &&
-      g_Analog_Bottom_Right != 0)
+  if (g_IsNight && g_Analog_Top_Left > LOW_THRESHOLD_NIGHT &&
+      g_Analog_Top_Right > LOW_THRESHOLD_NIGHT &&
+      g_Analog_Bottom_Left > LOW_THRESHOLD_NIGHT &&
+      g_Analog_Bottom_Right > LOW_THRESHOLD_NIGHT)
       return false;
       
   return g_IsNight;
